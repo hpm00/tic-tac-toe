@@ -5,13 +5,30 @@ require_relative 'player.rb'
 class Game
   include Display
   @@first_character = ''
-  
+
   def initialize
     @board = Board.new
     @first_player = nil
     @second_player = nil
-  end 
-  
+  end
+
+  def play
+    game_set_up
+    @board.display_board
+    turn
+  end
+
+  def turn
+    player = player == @first_player ? @second_player : @first_player
+    puts ask_player_turn(player.name, player.character)
+  end
+
+  def game_set_up
+    puts display_intro
+    @first_player = create_player(1)
+    @second_player = create_player(2)
+  end
+
   def create_player(number)
     puts ask_player_name(number)
     name = gets.chomp
@@ -22,9 +39,9 @@ class Game
 
   def second_character
     character = ''
-    @@first_character == 'X' ? character = 'O' : character = 'X'
-    puts "Your opponent chose #{@@first_character}. You are #{character}."
-    return character
+    character = @@first_character == 'X' ? 'O' : 'X'
+    puts "Your opponent chose '#{@@first_character}'. You are '#{character}'."
+    character
   end
 
   def valid_character?
@@ -33,13 +50,12 @@ class Game
       puts ask_player_character
       character = gets.chomp.upcase
       break if character == 'X' || character == 'O'
+
       puts invalid_input
     end
-    return @@first_character = character
+    @@first_character = character
   end
 end
 
-
-#game = Game.new
-#@first_player = game.create_player(1)
-#@second_player = game.create_player(2)
+game = Game.new
+p game.play
