@@ -10,19 +10,54 @@ class Game
     @board = Board.new
     @first_player = nil
     @second_player = nil
+    @current_player = nil
   end
 
   def play
     game_set_up
     @board.display_board
-    turn
+    player_turns
+    conclusion
   end
 
+  def conclusion
+    if @board.identify_winner
+      announce_winner(@current_player.name)
+      restart()
+    elsif @board.full_board?
+      puts announce_draw
+      restart()
+    end
+  end
+
+  def restart
+    input = gets.chomp.downcase
+    if input = 'y'
+      Game.new.play
+    else 
+      puts "Thanks for playing!"
+    end
+  end
+  
+  def player_turns
+    until @board.full_board? do
+      turn
+      number = gets.chomp.to_i 
+      if @board.valid_move?(number)
+        @board.update_board(number, @current_player.character)
+      else
+        puts invalid_input
+      end
+      break if @board.identify_winner
+    end
+  end
+      
   def turn
-    player = player == @first_player ? @second_player : @first_player
-    puts ask_player_turn(player.name, player.character)
+    @current_player = @current_player == @first_player ? @second_player : @first_player
+    puts ask_player_turn(@current_player.name, @current_player.character)
   end
 
+  
   def game_set_up
     puts display_intro
     @first_player = create_player(1)
