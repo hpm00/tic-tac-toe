@@ -23,19 +23,19 @@ class Game
   def conclusion
     if @board.identify_winner
       announce_winner(@current_player.name)
-      restart()
+      restart
     elsif @board.full_board?
       puts announce_draw
-      restart()
+      restart
     end
   end
 
   def restart
     input = gets.chomp.downcase
-    if input = 'y'
+    if input == 'y'
       Game.new.play
-    else 
-      puts "Thanks for playing!"
+    else
+      puts over
     end
   end
   
@@ -43,13 +43,14 @@ class Game
     until @board.full_board? do
       turn
       number = gets.chomp.to_i 
-      if @board.valid_move?(number)
-        @board.update_board(number, @current_player.character)
-      else
-        puts invalid_input
-      end
+      @board.valid_move?(number) ? @board.update_board(number, @current_player.character) : invalid_number
       break if @board.identify_winner
     end
+  end
+
+  def invalid_number
+    puts invalid_input
+    @current_player = @current_player == @first_player ? @second_player : @first_player
   end
       
   def turn
@@ -92,5 +93,4 @@ class Game
   end
 end
 
-game = Game.new
-p game.play
+Game.new.play
