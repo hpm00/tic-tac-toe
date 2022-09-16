@@ -32,4 +32,8 @@ module Display
   def announce_draw
     puts "It's a tie."
   end
+  
+  def over
+    puts "Thanks for playing!"
+  end
 end
